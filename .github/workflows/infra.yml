@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  RESOURCE_GROUP: RG-PetFaindr
+  RESOURCE_GROUP: petfaindr-rg
   LOCATION: swedencentral
 
 jobs:
@@ -55,3 +55,4 @@ jobs:
           echo "2. Create a new Classification project using the \`petspotraicustomvis1\` resource" >> $GITHUB_STEP_SUMMARY
           echo "3. Copy the Project ID from Project Settings" >> $GITHUB_STEP_SUMMARY
           echo "4. Add it as GitHub Secret \`CVAPI_PROJECT_ID\`" >> $GITHUB_STEP_SUMMARY
+

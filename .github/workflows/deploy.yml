@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  RESOURCE_GROUP: RG-PetFaindr
+  RESOURCE_GROUP: petfaindr-rg
   CLUSTER_NAME: petfaindraks
   CV_ACCOUNT: petspotraicustomvis1
 
@@ -110,3 +110,4 @@ jobs:
           echo "- Image tag: \`${{ env.IMAGE_TAG }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- Cluster: \`${{ env.CLUSTER_NAME }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- Resource group: \`${{ env.RESOURCE_GROUP }}\`" >> $GITHUB_STEP_SUMMARY
+
