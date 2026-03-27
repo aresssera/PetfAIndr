@@ -65,7 +65,8 @@ resource frontendService 'core/Service@v1' = {
     ports: [
       {
         port: 80
-        targetPort: '80'
+        #disable-next-line BCP036
+        targetPort: 80
         protocol: 'TCP'
       }
     ]
