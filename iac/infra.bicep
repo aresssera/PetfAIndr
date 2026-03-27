@@ -62,14 +62,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2024-08-01' = {
         enabled: true
       }
     }
-    addonProfiles: {
-      dapr: {
-        enabled: true
-        config: {
-          ha: 'false'
-        }
-      }
-    }
+    addonProfiles: {}
   }
 }
 
