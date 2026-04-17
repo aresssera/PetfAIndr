@@ -4,13 +4,20 @@
 @using Microsoft.Extensions.Logging
 @using Dapr.Client
 @using PetSpotR.Models
-@inject ILogger<FoundPet> Logger
+@inject ILogger<LostPetForm> Logger
 @inject IWebHostEnvironment Environment
 @inject NavigationManager NavigationManager
 
+
 <EditForm Model="@petModel" OnSubmit="@HandleSubmit" >
     <div class="form-container">
-        <h2>Step 1: Tell us about the pet you found</h2>
+        <h2 class="step-title">Step 1: Tell us about your pet and how to contact you</h2>
+        <div class="form-group row justify-content-center">
+            <label for="petName" class="col-2 col-form-label">Pet Name</label>
+            <div class="col-4 input-field">
+                <InputText class="input-field" id="name" @bind-Value="petModel.Name" />
+            </div>
+        </div>
         <div class="form-group row justify-content-center">
             <label for="petType" class="col-2 col-form-label">Pet Type</label>
             <div class="col-4">
@@ -21,16 +28,23 @@
             </div>
         </div>
         <div class="form-group row justify-content-center">
-            <label for="petBreed" class="col-2 col-form-label">Pet Breed (optional)</label>
-            <div class="col-4">
+            <label for="petBreed" class="col-2 col-form-label">Pet Breed</label>
+            <div class="col-4 input-field">
                 <InputText id="breed" @bind-Value="petModel.Breed" />
             </div>
         </div>
-        <h2>Step 2: Upload an image of the pet you found</h2>
+        <div class="form-group row justify-content-center">
+            <label for="petOwnerEmail" class="col-2 col-form-label">Owner Email</label>
+            <div class="col-4 input-field">
+                <InputText id="owneremail" @bind-Value="petModel.OwnerEmail" />
+            </div>
+        </div>
+        <h2 class="step-title">Step 2: Upload images of your pet</h2>
+        <p><i>For best results upload at least 5 images with different angles, lighting, and backgrounds</i></p>
         <div class="form-group row justify-content-center">
             <div class="col-4">
                 <label>
-                    <InputFile OnChange="@SelectImages" accept=".png,.jpg,.jpeg" />
+                    <InputFile OnChange="@SelectImages" multiple accept=".png,.jpg,.jpeg" />
                 </label>
             </div>
         </div>
@@ -38,10 +52,10 @@
         {
             <p>Uploading...</p>
         }
-        <h2>Step 3: Submit lost pet for AI prediction</h2>
+        <h2 class="step-title">Step 3: Submit lost pet for AI based finding</h2>
         <div class="form-group row">
             <div class="col-sm">
-                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                <button type="submit" class="btn-primary-action">Submit</button>
             </div>
         </div>
     </div>
@@ -49,8 +63,8 @@
 
 @code {
     private List<IBrowserFile> loadedImages = new();
-    private long maxFileSize = 1024 * 1000;
-    private int maxAllowedFiles = 1;
+    private long maxFileSize = 2048 * 1000;
+    private int maxAllowedFiles = 10;
     private bool isLoading;
 
     private PetModel petModel = new();
@@ -82,7 +96,8 @@
                     metadata: new Dictionary<string, string>
                     {
                         { "contentType", image.ContentType },
-                        { "blobName", filename }
+                        { "blobName", filename },
+                        { "fileName", filename }
                     }
                 );
             }
@@ -91,25 +106,14 @@
                 Logger.LogError("File: {Filename} Error: {Error}", image.Name, ex.Message);
             }
 
-            try {
-                Logger.LogInformation("Publishing event for file " +filename);
-                await daprClient.PublishEventAsync(
-                    pubsubName: "pubsub",
-                    topicName: "foundPet",
-                    data: new Dictionary<string, string>
-                    {
-                        { "imagePath", filename },
-                        { "type", petModel.Type },
-                        { "breed", petModel.Breed }
-                    }
-                );
-            } catch (Exception ex) {
-                Logger.LogError("Error: {Error}", ex.InnerException);
-                throw ex;
-            }
+            petModel.Images.Add(filename);
+
         }
 
-        NavigationManager.NavigateTo("/submit/found");
+        await petModel.SavePetStateAsync(daprClient, "pets");
+        await petModel.PublishLostPetAsync(daprClient, "pubsub");
+
+        NavigationManager.NavigateTo("/submit");
     }
 
     private void SelectImages(InputFileChangeEventArgs e)

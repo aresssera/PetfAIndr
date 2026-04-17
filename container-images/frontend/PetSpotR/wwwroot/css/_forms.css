@@ -1,0 +1,39 @@
+.form-container {
+    margin: 0 auto;
+    width: 70%;
+
+    .step-title {
+        margin-top: 50px;
+        margin-bottom: 30px;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .buttons a {
+        margin: 20px;
+    }
+
+    .row {
+        margin: 10px;
+    }
+
+    label {
+        font-weight: 600;
+        justify-content: right;
+        display: flex;
+    }
+
+    select {
+        display: block;
+    }
+
+    button {
+        margin: 0 auto;
+        display: block;
+    }
+}

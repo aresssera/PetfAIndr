@@ -1,15 +1,34 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import '_forms.css';
+@import '_confirmation.css';
+
+
+:root {
+    --dark-blue: #032030;
+    --ivory: #e6ebf0;
+    --green: #587630;
+    --misty-blue: #8eafd1;
+    --light-grey: #555;
+    --green-success: #58763033;
+    --red-failure: rgb(255 0 38 / 0.2);
+}
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    height: 100%;
 }
 
 h1:focus {
     outline: none;
 }
 
+h1,h2,p {
+    text-align: center;
+}
+
 a, .btn-link {
-    color: #0071c1;
+    color: #8700c1;
 }
 
 .btn-primary {
@@ -66,3 +85,28 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.btn-primary-action {
+    display: inline-block;
+    background-color: var(--green);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+    border: 2px solid transparent;
+    backface-visibility: hidden;
+}
+
+.btn-primary-action:hover {
+    background-color: #4a6328;
+    color: #e6ebf0;
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px var(--green-success);
+}
+
+.input-field{
+    border-radius: 8px;
+}

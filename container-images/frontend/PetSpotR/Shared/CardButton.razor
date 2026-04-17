@@ -1,0 +1,21 @@
+<a class="card-button" href="@Href">
+    <div class="icon-box">
+        <img src="@Icon" alt="@Alt" class="card-icon" />
+    </div>
+    <div class="card-content">
+        <h2 class="card-title">@TitlePrefix <b>@TitleHighlight</b> @TitleSuffix</h2>
+        <p class="card-subtitle">@Subtitle</p>
+    </div>
+</a>
+
+@code {
+    [Parameter] public string Href { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = "";
+    [Parameter] public string Alt { get; set; } = "";
+
+    [Parameter] public string TitlePrefix { get; set; } = "";
+    [Parameter] public string TitleHighlight { get; set; } = "";
+    [Parameter] public string TitleSuffix { get; set; } = "";
+
+    [Parameter] public string Subtitle { get; set; } = "";
+}
