@@ -1,10 +1,13 @@
 // Application -----------------------------------------
 
-@description('Name of the container registry. Defaults to unique hashed ID prefixed with "petfaindr"')
-param registryName string = 'petfaindr${uniqueString(resourceGroup().id)}'
+@description('Name of the container registry.')
+param registryName string = 'petfaindr6acr'
 
-@description('Name of the AKS cluster. Defaults to a unique hash prefixed with "petfaindr-"')
-param clusterName string = 'petfaindr'
+@description('Name of the AKS cluster.')
+param clusterName string = 'petfaindraks'
+
+@description('Container image tag to deploy (e.g. sha-abc1234 or latest).')
+param containerTag string = 'latest'
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-11-01-preview' existing = {
   name: registryName
@@ -19,7 +22,7 @@ module frontend 'app/frontend.bicep' = {
   params: {
     containerRegistry: containerRegistry.properties.loginServer
     kubeConfig: aksCluster.listClusterAdminCredential().kubeconfigs[0].value
-    containerTag: '1' 
+    containerTag: containerTag
   }
 }
 
@@ -28,7 +31,7 @@ module backend 'app/backend.bicep' = {
   params: {
     containerRegistry: containerRegistry.properties.loginServer
     kubeConfig: aksCluster.listClusterAdminCredential().kubeconfigs[0].value
-    containerTag: '1' 
+    containerTag: containerTag
   }
 }
 
