@@ -5,10 +5,11 @@ from cloudevents.http import from_http
 import json
 import os
 from dapr.clients import DaprClient
-from petspotr import pet
+from petfaindr import pet
 import requests
 import time
 from concurrent.futures import ThreadPoolExecutor
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 app = Flask(__name__)
 app_port = os.getenv('APP_PORT', '5000')
@@ -27,6 +28,12 @@ dapr = DaprClient()
 
 statestore = 'pets'
 pubsubbroker = 'pubsub'
+
+# Helper function with retry logic for Dapr state retrieval
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+def get_state_with_retry(store_name, key):
+    """Retrieve state from Dapr with automatic retry on transient failures."""
+    return dapr.get_state(store_name=store_name, key=key)
 
 # Create a thread pool executor
 executor = ThreadPoolExecutor(max_workers=10)
@@ -54,7 +61,7 @@ def process_lost_pet(event):
 
     # Get pet details from Dapr state store (e.g. Azure Cosmos DB)
     try: 
-        result = dapr.get_state(store_name=statestore, key=id)
+        result = get_state_with_retry(store_name=statestore, key=id)
         data = json.loads(result.data)
         current_time_str = time.strftime("%H:%M:%S", time.localtime())
         print(f'{current_time_str}: New lost Pet information retrieved', flush=True)
@@ -104,7 +111,7 @@ def process_lost_pet(event):
             response.raise_for_status() # Raise an exception for 4xx/5xx responses - for 200 OK, the code will continue
             print(f'Successfully added image {image} to the tag with id {tag_id}', flush=True)
         except requests.exceptions.RequestException as e:
-            print(f'Error sending data to Azure Custom Vision: {e}', flush=True)
+            print(f'Error while adding images to the new tag in Azure Custom Vision: {e}', flush=True)
             return
 
     ### Train the model and get the iteration ID
@@ -121,22 +128,22 @@ def process_lost_pet(event):
         #store the iteration id for later usage in the DB
         db_iteration_id = { "id": iteration_id }
     except requests.exceptions.RequestException as e:
-            print(f'Error sending data to Azure Custom Vision: {e}', flush=True)
-            return
+            print(f'Error while starting the training of the model: {e}', flush=True)
+            return #stopping, since the overall process is broken.
 
     ### Wait until the new iteration is trained
     current_time_str = time.strftime("%H:%M:%S", time.localtime())
-    print(f'{current_time_str}: Waiting for 10 Min. (divided in 2 steps) until the model has been trained with the new images and can be published ...', flush=True)
+    print(f'{current_time_str}: Waiting for 10 Min. (divided in 2 steps) until the model has been trained with the new images, so it can be published ...', flush=True)
     time.sleep(300)
     current_time_str = time.strftime("%H:%M:%S", time.localtime())
     print(f'{current_time_str}: 2nd of 2 wait cycles started', flush=True)
     time.sleep(300)
     current_time_str = time.strftime("%H:%M:%S", time.localtime())
-    print(f'{current_time_str}: End of the waiting cycle', flush=True)
+    print(f'{current_time_str}: End of the waiting cycle to ensure the model got properly trained with the new images', flush=True)
     
     #Check for published iterations and delete them
     try:
-        result = dapr.get_state(store_name=statestore, key="published_db_iteration_id")
+        result = get_state_with_retry(store_name=statestore, key="published_db_iteration_id")
                 
         if result.data:
             data = json.loads(result.data)
@@ -147,10 +154,12 @@ def process_lost_pet(event):
             response.raise_for_status() # Raise an exception for 4xx/5xx responses - for 200 OK, the code will continue
             print(f'Successfully unpublished iteration with ID: {last_published_iteration_id} ', flush=True)
         else:
-             print(f'No published iteration ID found in the state store.', flush=True)
+             print(f'No published iteration ID found in the state store. Continuing with publishing the new iteration.', flush=True)
         
-    except requests.exceptions.RequestException as e:
-        print(f'Multiple reasons for this error - Maybe due to a not existing Entry in the DB, or the iteration could not be unpublished. More insights see, error: {e}', flush=True)
+    except (requests.exceptions.RequestException, json.JSONDecodeError, Exception) as e:
+        current_time_str = time.strftime("%H:%M:%S", time.localtime())
+        print(f'{current_time_str}: Error while unpublishing previous iteration. Error is: {type(e).__name__}: {e}', flush=True)
+        # Stopping the execution, since the existence of a published iteration blocks the pulication of a new one.
         return
     
     ### Publish the new iteration and save the new iteration id in the state store
@@ -165,7 +174,7 @@ def process_lost_pet(event):
         current_time_str = time.strftime("%H:%M:%S", time.localtime())
         print(f'{current_time_str}: Successfully saved the new published iteration id -{iteration_id}- to the state store.', flush=True)
     except requests.exceptions.RequestException as e:
-        print(f'Error sending data to Azure Custom Vision: {e}', flush=True)
+        print(f'Error while publishing the newest model on the Azure Custom Vision service: {e}', flush=True)
 
 @app.route('/lostPet', methods=['POST'])
 def lostPet():
@@ -199,7 +208,7 @@ def process_found_pet(event):
                 try:
                     # Set the status to found - the key in the DB is the id which is stored in the tagname - THIS architectural design makes it work to update the correct entry in the DB
                     # Retrieve the current state
-                    result = dapr.get_state(store_name=statestore, key=prediction['tagName'])
+                    result = get_state_with_retry(store_name=statestore, key=prediction['tagName'])
                     current_state = json.loads(result.data)
 
                     # Update the state value

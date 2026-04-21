@@ -6,7 +6,7 @@ param kubeConfig string
 param containerRegistry string
 
 @description('Tag of container to use')
-param containerTag string = '1'
+param containerTag string = '4'
 
 extension kubernetes with {
   kubeConfig: kubeConfig
@@ -44,6 +44,12 @@ resource frontendDeployment 'apps/Deployment@v1' = {
             name: 'frontend'
             image: '${containerRegistry}/petf:${containerTag}'
             imagePullPolicy: 'Always'
+            ports: [
+              { 
+                name: 'http'
+                containerPort: 80 
+              }
+            ]
           }
         ]
       }
@@ -53,9 +59,9 @@ resource frontendDeployment 'apps/Deployment@v1' = {
 
 resource frontendService 'core/Service@v1' = {
   metadata: {
-    name: 'frontend'
+    name: 'frontend-svc'
     labels: {
-      app: 'frontend'
+      app: 'frontend-svc'
     }
   }
   spec: {
@@ -65,8 +71,7 @@ resource frontendService 'core/Service@v1' = {
     ports: [
       {
         port: 80
-        #disable-next-line BCP036
-        targetPort: 80
+        targetPort: 'http'
         protocol: 'TCP'
       }
     ]

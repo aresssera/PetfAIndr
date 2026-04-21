@@ -11,11 +11,10 @@ resource ingress 'networking.k8s.io/Ingress@v1' = {
   metadata: {
     name: 'frontend'
     annotations: {
-      'spec.ingressClassName': 'webapprouting.kubernetes.azure.com'
+      'kubernetes.io/ingress.class': 'addon-http-application-routing'
     }
   }
   spec: {
-    ingressClassName: 'webapprouting.kubernetes.azure.com'
     rules: [
       {
         http: {

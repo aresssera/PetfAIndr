@@ -1,34 +1,14 @@
 @description('Name of the AKS cluster. Defaults to a unique hash prefixed with "petfaindr"')
-param clusterName string = 'petfaindraks'
+param clusterName string = 'petfaindr'
 
 @description('Azure Storage Account name')
-param storageAccountName string = 'storepetfaindr'
+param storageAccountName string = 'petfaindr${uniqueString(resourceGroup().id)}'
 
 @description('Azure CosmosDB account name')
-param cosmosAccountName string = 'cospetfaindr'
+param cosmosAccountName string = 'petfaindr-${uniqueString(resourceGroup().id)}'
 
 @description('Azure Service Bus authorization rule name')
-param serviceBusAuthorizationRuleName string = 'buspetfaindr/Dapr'
-
-@description('Custom Vision training endpoint URL')
-param cvapiTrainingEndpoint string
-
-@secure()
-@description('Custom Vision training API key')
-param cvapiTrainingKey string
-
-@description('Custom Vision prediction endpoint URL')
-param cvapiPredictionEndpoint string
-
-@secure()
-@description('Custom Vision prediction API key')
-param cvapiPredictionKey string
-
-@description('Custom Vision project ID')
-param cvapiProjectId string
-
-@description('Custom Vision prediction resource ID')
-param cvapiPredictionResourceId string
+param serviceBusAuthorizationRuleName string = 'petfaindr-${uniqueString(resourceGroup().id)}/Dapr'
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-08-01' existing = {
   name: clusterName
@@ -55,11 +35,11 @@ module secrets 'secrets.bicep' = {
     storageAccountName: storageAccount.name
     storageAccountKey: storageAccount.listKeys().keys[0].value
     serviceBusConnectionString: serviceBusAuthorizationRule.listKeys().primaryConnectionString
-    cvapiTrainingEndpoint: cvapiTrainingEndpoint
-    cvapiTrainingKey: cvapiTrainingKey
-    cvapiPredictionEndpoint: cvapiPredictionEndpoint
-    cvapiPredictionKey: cvapiPredictionKey
-    cvapiProjectId: cvapiProjectId
-    cvapiPredictionResourceId: cvapiPredictionResourceId
+    cvapiTrainingEndpoint: '<your custom Vision API TRAINING endoint indcluding the last "/">'
+    cvapiTrainingKey: '<your custom Vision API Training Key>'
+    cvapiPredictionEndpoint: '<your custom Vision PREDICTION API endoint indcluding the last "/">'
+    cvapiPredictionKey: '<your custom Vision API Prediction Key>'
+    cvapiProjectId: ''<your custom Vision project ID>''
+    cvapiPredictionResourceId: ''<your custom Vision Prediction Resource ID>''
   }
 }
