@@ -10,6 +10,30 @@ param cosmosAccountName string = 'petfaindr-${uniqueString(resourceGroup().id)}'
 @description('Azure Service Bus authorization rule name')
 param serviceBusAuthorizationRuleName string = 'petfaindr-${uniqueString(resourceGroup().id)}/Dapr'
 
+@description('Custom Vision API training endpoint')
+@secure()
+param cvapiTrainingEndpoint string
+
+@description('Custom Vision API training key')
+@secure()
+param cvapiTrainingKey string
+
+@description('Custom Vision API prediction endpoint')
+@secure()
+param cvapiPredictionEndpoint string
+
+@description('Custom Vision API prediction key')
+@secure()
+param cvapiPredictionKey string
+
+@description('Custom Vision API project id')
+@secure()
+param cvapiProjectId string
+
+@description('Custom Vision API prediction resource id')
+@secure()
+param cvapiPredictionResourceId string
+
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-08-01' existing = {
   name: clusterName
 }
@@ -35,11 +59,11 @@ module secrets 'secrets.bicep' = {
     storageAccountName: storageAccount.name
     storageAccountKey: storageAccount.listKeys().keys[0].value
     serviceBusConnectionString: serviceBusAuthorizationRule.listKeys().primaryConnectionString
-    cvapiTrainingEndpoint: '<your custom Vision API TRAINING endoint indcluding the last "/">'
-    cvapiTrainingKey: '<your custom Vision API Training Key>'
-    cvapiPredictionEndpoint: '<your custom Vision PREDICTION API endoint indcluding the last "/">'
-    cvapiPredictionKey: '<your custom Vision API Prediction Key>'
-    cvapiProjectId: '<your custom Vision project ID>'
-    cvapiPredictionResourceId: '<your custom Vision Prediction Resource ID>'
+    cvapiTrainingEndpoint: cvapiTrainingEndpoint
+    cvapiTrainingKey: cvapiTrainingKey
+    cvapiPredictionEndpoint: cvapiPredictionEndpoint
+    cvapiPredictionKey: cvapiPredictionKey
+    cvapiProjectId: cvapiProjectId
+    cvapiPredictionResourceId: cvapiPredictionResourceId
   }
 }
