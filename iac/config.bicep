@@ -39,7 +39,7 @@ module secrets 'secrets.bicep' = {
     cvapiTrainingKey: '<your custom Vision API Training Key>'
     cvapiPredictionEndpoint: '<your custom Vision PREDICTION API endoint indcluding the last "/">'
     cvapiPredictionKey: '<your custom Vision API Prediction Key>'
-    cvapiProjectId: ''<your custom Vision project ID>''
-    cvapiPredictionResourceId: ''<your custom Vision Prediction Resource ID>''
+    cvapiProjectId: '<your custom Vision project ID>'
+    cvapiPredictionResourceId: '<your custom Vision Prediction Resource ID>'
   }
 }
