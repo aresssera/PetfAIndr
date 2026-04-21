@@ -1,14 +1,14 @@
-@description('Name of the AKS cluster. Defaults to a unique hash prefixed with "petfaindr"')
-param clusterName string = 'petfaindr'
+@description('Name of the AKS cluster.')
+param clusterName string = 'petfaindraks'
 
 @description('Azure Storage Account name')
-param storageAccountName string = 'petfaindr${uniqueString(resourceGroup().id)}'
+param storageAccountName string = 'storepetfaindr'
 
 @description('Azure CosmosDB account name')
-param cosmosAccountName string = 'petfaindr-${uniqueString(resourceGroup().id)}'
+param cosmosAccountName string = 'cospetfaindr'
 
 @description('Azure Service Bus authorization rule name')
-param serviceBusAuthorizationRuleName string = 'petfaindr-${uniqueString(resourceGroup().id)}/Dapr'
+param serviceBusAuthorizationRuleName string = 'buspetfaindr/Dapr'
 
 @description('Custom Vision API training endpoint')
 @secure()
