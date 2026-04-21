@@ -78,3 +78,17 @@ Run the `infra.yml` workflow (push a change to `iac/infra.bicep` or trigger manu
 ### 8. Build, push, and deploy
 
 Trigger the `build-push.yml` workflow (push a change to `container-images/` or trigger manually). Once it succeeds, `deploy.yml` runs automatically and deploys everything to AKS.
+
+## Pausing to Save Credits
+
+When you're not actively using the app, stop the AKS cluster to deallocate the node VMs (the largest cost). Cosmos DB, Service Bus, and Storage still accrue small charges, but no re-setup is needed — `az aks start` brings everything back exactly as it was.
+
+```powershell
+az aks stop --resource-group petfaindr-rg --name petfaindraks
+```
+
+Resume later with:
+
+```powershell
+az aks start --resource-group petfaindr-rg --name petfaindraks
+```
