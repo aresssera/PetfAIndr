@@ -1,14 +1,31 @@
 ﻿@page "/"
 
-<PageTitle>PetfAIndr</PageTitle>
+<div class="index-container">
+    <div>
+    <h2>Welcome to the future of finding lost pets</h2>
 
-<div class="splash">
-    <img src="logo.jpg" />
-</div>
+    <div class="buttons">
+        <div class="button-container">
+            <CardButton
+                Href="/lost"
+                Icon="/images/lostPet.svg"
+                Alt="Lost Pet Icon"
+                TitlePrefix="I"
+                TitleHighlight="Lost"
+                TitleSuffix="My Pet"
+                Subtitle="Find Your Missing Companion." />
+        </div>
 
-<h2>Reconnect with your lost pets using advanced AI out of the Microsoft Azure Cloud</h2>
-
-<div class="buttons">
-    <a class="btn btn-primary btn-lg" role="button" href="/lost">I <b>lost</b> my pet</a>
-    <a class="btn btn-success btn-lg" role="button" href="/found">I <b>found</b> a pet</a>
+        <div class="button-container">
+            <CardButton
+                Href="/found"
+                Icon="/images/foundPet.svg"
+                Alt="Found Pet Icon"
+                TitlePrefix="I"
+                TitleHighlight="Found"
+                TitleSuffix="A Pet"
+                Subtitle="Report and Safe Keep a found Animal." />
+        </div>
+    </div>
+    </div>
 </div>

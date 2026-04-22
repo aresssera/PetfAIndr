@@ -1,26 +1,26 @@
-.splash {
+.index-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-img {
-    margin: auto;
-    display: block;
-    max-width: 50%;
-}
-
 h2 {
+    font-size: 2.4em;
+    font-weight: 700;
     text-align: center;
+    margin-top: 80px;
 }
 
 .buttons {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+    align-items: flex-start;
+    margin-top: 80px;
 }
 
-.buttons a {
-    margin: 20px;
+.button-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
