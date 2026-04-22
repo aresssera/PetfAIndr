@@ -11,52 +11,55 @@
 
 <EditForm Model="@petModel" OnSubmit="@HandleSubmit" >
     <div class="form-container">
-        <h2 class="step-title">Step 1: Tell us about your pet and how to contact you</h2>
-        <div class="form-group row justify-content-center">
-            <label for="petName" class="col-2 col-form-label">Pet Name</label>
-            <div class="col-4 input-field">
-                <InputText class="input-field" id="name" @bind-Value="petModel.Name" />
+        <section>
+            <h2 class="step-title">Step 1: Tell us about your pet and how to contact you</h2>
+            <div class="from-questions">
+                <div class="row justify-content-center">
+                    <label for="petName" class="col-2 col-form-label">Pet Name*</label>
+                    <div class="col-4">
+                        <InputText class="input-field" id="name" @bind-Value="petModel.Name" />
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <label for="petType" class="col-2 col-form-label">Pet Type*</label>
+                    <div class="col-4">
+                        <InputSelect id="type" class="input-field" @bind-Value="petModel.Type">
+                            <option>Dog</option>
+                            <option>Cat</option>
+                        </InputSelect>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <label for="petBreed" class="col-2 col-form-label">Pet Breed*</label>
+                    <div class="col-4">
+                        <InputText id="breed" class="input-field" @bind-Value="petModel.Breed" />
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <label for="petOwnerEmail" class="col-2 col-form-label">Owner Email*</label>
+                    <div class="col-4">
+                        <InputText id="owneremail" class="input-field" @bind-Value="petModel.OwnerEmail" />
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="form-group row justify-content-center">
-            <label for="petType" class="col-2 col-form-label">Pet Type</label>
-            <div class="col-4">
-                <InputSelect id="type" @bind-Value="petModel.Type">
-                    <option>Dog</option>
-                    <option>Cat</option>
-                </InputSelect>
+        </section>
+        <section>
+            <h2 class="step-title">Step 2: Upload images of your pet</h2>
+            <p><i>For best results upload at least 5 images with different angles, lighting, and backgrounds</i></p>
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <label>
+                        <InputFile OnChange="@SelectImages" multiple accept=".png,.jpg,.jpeg" />
+                    </label>
+                </div>
             </div>
-        </div>
-        <div class="form-group row justify-content-center">
-            <label for="petBreed" class="col-2 col-form-label">Pet Breed</label>
-            <div class="col-4 input-field">
-                <InputText id="breed" @bind-Value="petModel.Breed" />
-            </div>
-        </div>
-        <div class="form-group row justify-content-center">
-            <label for="petOwnerEmail" class="col-2 col-form-label">Owner Email</label>
-            <div class="col-4 input-field">
-                <InputText id="owneremail" @bind-Value="petModel.OwnerEmail" />
-            </div>
-        </div>
-        <h2 class="step-title">Step 2: Upload images of your pet</h2>
-        <p><i>For best results upload at least 5 images with different angles, lighting, and backgrounds</i></p>
-        <div class="form-group row justify-content-center">
-            <div class="col-4">
-                <label>
-                    <InputFile OnChange="@SelectImages" multiple accept=".png,.jpg,.jpeg" />
-                </label>
-            </div>
-        </div>
-        @if (isLoading)
-        {
-            <p>Uploading...</p>
-        }
-        <h2 class="step-title">Step 3: Submit lost pet for AI based finding</h2>
-        <div class="form-group row">
-            <div class="col-sm">
-                <button type="submit" class="btn-primary-action">Submit</button>
-            </div>
+            @if (isLoading)
+            {
+                <p>Uploading...</p>
+            }
+        </section>
+        <div class="submit-container">
+            <button type="submit" class="btn-primary-action">Submit</button>
         </div>
     </div>
 </EditForm>

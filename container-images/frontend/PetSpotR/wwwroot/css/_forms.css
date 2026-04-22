@@ -1,6 +1,18 @@
 .form-container {
     margin: 0 auto;
     width: 70%;
+    padding-bottom: 20px;
+
+    .submit-container{
+        padding-top: 80px;
+        justify-content: center;
+
+        button {
+            width: 200px !important;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
 
     .step-title {
         margin-top: 50px;
